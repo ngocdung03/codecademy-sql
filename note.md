@@ -1,4 +1,4 @@
-##### What is SQL
+##### SQL Manipulation
 - SQL (pronounced “S-Q-L” or “sequel”) allows you to write queries which define the subset of data you are seeking. 
 - multi-step process where some users leave at each step is called a funnel.
 - A churn rate is the percent of subscribers to a monthly service who have canceled. 
@@ -58,4 +58,77 @@ CREATE TABLE celebs (
 ```sql
 CREATE INDEX customers_by_phone
 ON customers (phone_number)
+```
+
+##### Queries
+- AS is a keyword in SQL that allows you to rename a column or table using an alias
+```sql
+SELECT name AS 'Titles'
+FROM movies;
+```
+- DISTINCT is used to return unique values in the output. 
+```sql
+SELECT DISTINCT tools 
+FROM inventory;
+```
+- restrict our query results using the WHERE clause in order to obtain only the information we want.
+```sql
+SELECT *
+FROM movies
+WHERE imdb_rating > 8;
+```
+- LIKE can be a useful operator when you want to compare similar values. LIKE is not case sensitive.'_' - individual character, '%' - zero or more. 
+```sql
+-- select all movies that start with ‘Se’ and end with ‘en’ and have exactly one character in the middle
+SELECT * 
+FROM movies
+WHERE name LIKE 'Se_en';
+
+-- Filters the result set to only include movies with names that begin with the letter ‘A’
+SELECT * 
+FROM movies
+WHERE name LIKE 'A%';
+```
+- IS NULL vs IS NOT NULL
+- The BETWEEN operator is used in a WHERE clause to filter the result set within a certain range
+```sql
+SELECT *
+FROM movies
+WHERE year BETWEEN 1990 AND 1999;   -- 1999 inclusive
+
+-- result set to only include movies with names that begin with the letter ‘A’ up to, but not including ones that begin with ‘J’.
+SELECT *
+FROM movies
+WHERE name BETWEEN 'A' AND 'J';  -- 'J' only will be included
+```
+- AND operator:
+```sql
+SELECT * 
+FROM movies
+WHERE year BETWEEN 1990 AND 1999
+   AND genre = 'romance';
+```
+- Similar to OR operator
+- Sort the results using ORDER BY, either alphabetically or numerically. The column that we ORDER BY doesn’t even have to be one of the columns that we’re displaying. Note: ORDER BY always goes after WHERE (if WHERE is present).
+```sql
+SELECT *
+FROM movies
+WHERE imdb_rating > 8
+ORDER BY year DESC;      --ASC is default
+```
+- LIMIT is a clause that lets you specify the maximum number of rows the result set will have.
+```sql
+SELECT *
+FROM movies
+LIMIT 10;
+```
+- A CASE statement allows us to create different outputs (usually in the SELECT statement). It is SQL’s way of handling if-then logic.
+```sql
+SELECT name,
+ CASE
+  WHEN imdb_rating > 8 THEN 'Fantastic'
+  WHEN imdb_rating > 6 THEN 'Poorly Received'
+  ELSE 'Avoid at All Costs'
+ END AS 'Review' --To shorten the very long columnn name, we can rename the it to ‘Review’
+FROM movies;
 ```
