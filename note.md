@@ -132,3 +132,62 @@ SELECT name,
  END AS 'Review' --To shorten the very long columnn name, we can rename the it to ‘Review’
 FROM movies;
 ```
+##### Aggregrate
+- COUNT(): count the number of rows
+```sql
+SELECT COUNT(*)
+FROM table_name;
+```
+- SUM(): the sum of the values in a column
+```sql
+SELECT SUM(downloads)
+FROM fake_apps;
+```
+- MAX()/MIN(): the largest/smallest value
+- AVG(): the average of the values in a column
+- ROUND(): round the values in the column to the number of decimal places specified by the integer.
+```sql
+SELECT ROUND(price, 0)
+FROM fake_apps;
+```
+- GROUP BY
+```sql
+SELECT year,
+   AVG(imdb_rating)
+FROM movies
+GROUP BY year
+ORDER BY year;
+-- The GROUP BY statement comes after any WHERE statements, but before ORDER BY or LIMIT
+```
+- SQL lets us use column reference(s) in our GROUP BY that will make our lives easier: 1 is the first column selected, 2 is the second column selected, ...
+```sql
+SELECT ROUND(imdb_rating),
+   COUNT(name)
+FROM movies
+GROUP BY 1
+ORDER BY 1;
+```
+- Filter groups using HAVING. In fact, all types of WHERE clauses you learned about thus far can be used with HAVING.
+```sql
+SELECT year,
+   genre,
+   COUNT(name)
+FROM movies
+GROUP BY 1, 2
+HAVING COUNT(name) > 10;
+-- HAVING statement always comes after GROUP BY, but before ORDER BY and LIMIT.
+```
+- Code challenge 2: What are the most popular first names on Codeflix?
+```sql
+SELECT first_name, COUNT(*)
+FROM users
+GROUP BY first_name
+ORDER BY 2 DESC;
+```
+- Code challenge 5: Generate a table of user ids and total watch duration for users who watched more than 400 minutes of content.
+```sql
+SELECT user_id, SUM(watch_duration_in_minutes) AS 'total_watch_duration'
+FROM watch_history
+GROUP BY 1
+HAVING total_watch_duration > 400;   -- error if using '2'
+```
