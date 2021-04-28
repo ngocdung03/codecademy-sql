@@ -1,4 +1,4 @@
-##### SQL Manipulation
+##### 1.SQL Manipulation
 - SQL (pronounced “S-Q-L” or “sequel”) allows you to write queries which define the subset of data you are seeking. 
 - multi-step process where some users leave at each step is called a funnel.
 - A churn rate is the percent of subscribers to a monthly service who have canceled. 
@@ -60,7 +60,7 @@ CREATE INDEX customers_by_phone
 ON customers (phone_number)
 ```
 
-##### Queries
+##### 2.Queries
 - AS is a keyword in SQL that allows you to rename a column or table using an alias
 ```sql
 SELECT name AS 'Titles'
@@ -132,7 +132,7 @@ SELECT name,
  END AS 'Review' --To shorten the very long columnn name, we can rename the it to ‘Review’
 FROM movies;
 ```
-##### Aggregrate
+##### 3.Aggregrate
 - COUNT(): count the number of rows
 ```sql
 SELECT COUNT(*)
@@ -190,4 +190,14 @@ SELECT user_id, SUM(watch_duration_in_minutes) AS 'total_watch_duration'
 FROM watch_history
 GROUP BY 1
 HAVING total_watch_duration > 400;   -- error if using '2'
+```
+##### 4.Multiple table
+- Imagine that we’re running a magazine company where users can have different types of subscriptions to different products. A lot of this information would be repeated. If the same customer has multiple subscriptions, that customer’s name and address will be reported multiple times. If the same subscription type is ordered by multiple customers, then the subscription price and subscription description will be repeated. This will make our table big and unmanageable.
+- JOIN tables (inner join)
+```sql
+SELECT *  -- If we only want to select certain columns, we can specify
+FROM orders  -- first table 
+JOIN customers
+  ON orders.customer_id = customers.customer_id;  -- match orders table’s customer_id column with customers table’s customer_id column.
+-- use the syntax table_name.column_name to be sure that our requests for columns are unambiguous. 
 ```
