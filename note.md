@@ -258,3 +258,31 @@ FROM previous_results
 JOIN customers
   ON _____ = _____;
 ```
+##### 4.2 Subqueries
+- Same functionality as a join, but with much more readability.
+- a subquery is an internal query nested inside of an external query. 
+   - can be placed inside of SELECT, INSERT, UPDATE, or DELETE statements.
+   - Anytime a subquery is present, it gets executed before the external statement is run.
+```sql
+-- Using Inner Join
+SELECT id, first_name, last_name
+FROM book_club
+JOIN art_club
+  ON book_club.id = art_club.id;
+
+-- Using Subqueries
+SELECT id, first_name, last_name
+FROM book_club
+WHERE id IN (
+   SELECT id 
+   FROM art_club); -- the subquery SELECT statement would be executed first, resulting in a list of student ids from the art_club table. Then, the outer query would run and select the student ids from book_club table which also appear in the subquery results.
+```
+```sql
+-- Write a DELETE query that will remove 9th grade students enrolled in both band and drama from the drama_students table.
+DELETE FROM drama_students
+WHERE id in (
+  SELECT id 
+  FROM band_students
+  WHERE grade = 9);
+```
+
