@@ -201,3 +201,60 @@ JOIN customers
   ON orders.customer_id = customers.customer_id;  -- match orders table’s customer_id column with customers table’s customer_id column.
 -- use the syntax table_name.column_name to be sure that our requests for columns are unambiguous. 
 ```
+- LEFT JOIN will keep all rows from the first table, regardless of whether there is a matching row in the second table.
+```sql
+SELECT *
+FROM table1
+LEFT JOIN table2
+  ON table1.c2 = table2.c2;
+```
+- Primary key: a column that uniquely identifies each row of that table:
+   - None of the values can be NULL.
+   - Each value must be unique
+   - A table can not have more than one primary key column.
+- When the primary key for one table appears in a different table, it is called a foreign key.
+```sql
+SELECT *
+FROM classes
+JOIN students
+  ON classes.id = students.class_id;
+```
+- CROSS JOIN: combine all rows of one table with all rows of another table.
+```sql
+SELECT shirts.shirt_color,  -- select the columns shirt_color and pants_color
+   pants.pants_color
+FROM shirts  -- pulls data from the table shirts
+CROSS JOIN pants; -- performs a CROSS JOIN with pants
+```
+   - A more common usage of CROSS JOIN is when we need to compare each row of a table to a list of values.
+   ```sql
+   SELECT month, COUNT(*)
+   FROM newspaper
+   CROSS JOIN months
+   WHERE start_month <= month
+   AND end_month >= month
+   GROUP BY month;
+   ```
+- UNION: stack one dataset on top of the other.
+```sql
+SELECT *
+FROM table1
+UNION
+SELECT *
+FROM table2;
+```
+   - Tables must have the same number of columns.
+   - The columns must have the same data types in the same order as the first table.
+- WITH: combine two tables, but one of the tables is the result of another calculation.
+```sql
+WITH previous_results AS (
+   SELECT customer_id,
+   COUNT(subscription_id) AS 'subscriptions'
+FROM orders
+GROUP BY customer_id;
+)
+SELECT *
+FROM previous_results
+JOIN customers
+  ON _____ = _____;
+```
