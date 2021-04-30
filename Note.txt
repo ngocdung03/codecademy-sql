@@ -1,0 +1,4 @@
+- ?5 Lessons from user churn
+- Projects (read the previous article if any) and article from 3. Calculating Aggregates
+- 5. Going Off-Platform was finished
+- Quiz: window functions of section 7

@@ -355,4 +355,58 @@ WHERE EXISTS (
   FROM drama_students
 );
 ```
+##### Real data with SQL
+- Funnel: marketing model which illustrates the theoretical customer journey towards the purchase of a product or service. Oftentimes, we want to track how many users complete a series of steps and know which steps have the most number of users giving up.
+```sql
+-- Build a basic tunnel
+SELECT question_text, COUNT(DISTINCT user_id)
+FROM survey_responses
+GROUP BY question_text;
+```
+```sql
+-- Compare funnels for A/B test
+SELECT modal_text, COUNT(DISTINCT CASE 
+WHEN ab_group = 'control' THEN user_id
+END) as 'control_clicks', COUNT(DISTINCT CASE 
+WHEN ab_group = 'variant' THEN user_id
+END) as 'variant_clicks'
+FROM onboarding_modals
+GROUP BY 1
+ORDER BY 1;
+```
+- Build a Funnel from Multiple Tables : we’ll need to use a series of LEFT JOIN commands.
+```sql
+SELECT DISTINCT b.browse_date,
+b.user_id,
+c.user_id IS NOT NULL AS 'is_checkout',  -- If a user_id is not in the checkout table (aliased as c), then b.user_id will be filled in, but c.user_id will be NULL because of our LEFT JOIN.
+p.user_id IS NOT NULL AS 'is_purchase'
+FROM browse AS 'b'
+LEFT JOIN checkout AS 'c'
+  ON c.user_id = b.user_id
+LEFT JOIN purchase AS 'p'
+  ON p.user_id = c.user_id
+LIMIT 50;
+```
+```sql
+-- The management team suspects that conversion from checkout to purchase changes as the browse_date gets closer to Christmas Day.
+WITH funnels AS (
+  SELECT DISTINCT b.browse_date,
+     b.user_id,
+     c.user_id IS NOT NULL AS 'is_checkout',
+     p.user_id IS NOT NULL AS 'is_purchase'
+  FROM browse AS 'b'
+  LEFT JOIN checkout AS 'c'
+    ON c.user_id = b.user_id
+  LEFT JOIN purchase AS 'p'
+    ON p.user_id = c.user_id)
+SELECT browse_date, COUNT(*) AS 'num_browse',
+   SUM(is_checkout) AS 'num_checkout',
+   SUM(is_purchase) AS 'num_purchase',
+   1.0 * SUM(is_checkout) / COUNT(user_id) AS 'browse_to_checkout',
+   1.0 * SUM(is_purchase) / SUM(is_checkout) AS 'checkout_to_purchase'
+FROM funnels
+GROUP BY browse_date
+ORDER BY browse_date;
+```
+
 
