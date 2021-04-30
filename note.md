@@ -258,10 +258,60 @@ FROM previous_results
 JOIN customers
   ON _____ = _____;
 ```
+```sql
+-- used a WITH statement to create two temporary tables: January and February
+WITH january AS (
+  SELECT *
+  FROM plays
+  WHERE strftime("%m", play_date) = '01'
+),
+february AS (
+  SELECT *
+  FROM plays
+  WHERE strftime("%m", play_date) = '02'
+
+)
+SELECT january.user_id
+FROM january
+LEFT JOIN february
+ON january.user_id = february.user_id
+WHERE february.user_id IS NULL;
+```
+```sql
+-- CROSS JOIN by months and see active status
+ SELECT premium_users.user_id,
+  months.months,
+  CASE
+    WHEN (
+      premium_users.purchase_date <= months.months
+      )
+      AND
+      (
+        premium_users.cancel_date >= months.months
+        OR
+        premium_users.cancel_date IS NULL
+      )
+    THEN 'active'
+    ELSE 'not_active'
+  END AS 'status'
+FROM premium_users
+CROSS JOIN months;
+```
+```sql
+-- use UNION to quickly make a “mini” dataset:
+SELECT '2017-01-01' as month
+UNION
+SELECT '2017-02-01' as month
+UNION
+SELECT '2017-03-01' as month;
+```
+
 ##### 4.2 Subqueries
 - Same functionality as a join, but with much more readability.
 - a subquery is an internal query nested inside of an external query. 
    - can be placed inside of SELECT, INSERT, UPDATE, or DELETE statements.
+   - IN/NOT IN, Comparison operators
+   - EXISTS/NOT EXISTS: different with IN/NOT IN: we are only checking for the presence of rows meeting the specified criteria, so the inner query only returns a true or false. Only needs to find the presence of one row to determine if a true or false value needs to be returned.
    - Anytime a subquery is present, it gets executed before the external statement is run.
 ```sql
 -- Using Inner Join
@@ -284,5 +334,25 @@ WHERE id in (
   SELECT id 
   FROM band_students
   WHERE grade = 9);
+```
+```sql
+-- find the students enrolled in drama that are in the same grade as id 20
+SELECT *
+FROM drama_students
+WHERE grade = (
+  SELECT grade
+  FROM band_students
+  WHERE id = 20
+);
+```
+- EXISTS
+```sql
+ -- find out which grade levels are represented in both band and drama.
+SELECT grade
+FROM band_students
+WHERE EXISTS (
+  SELECT grade
+  FROM drama_students
+);
 ```
 
